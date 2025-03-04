@@ -1,0 +1,90 @@
+definitions:
+  models.Album:
+    properties:
+      artist:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      title:
+        type: string
+    required:
+    - artist
+    - price
+    - title
+    type: object
+info:
+  contact: {}
+paths:
+  /album:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of albums
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Album'
+            type: array
+      summary: Get albums
+      tags:
+      - albums
+    post:
+      consumes:
+      - application/json
+      description: Create album
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Album'
+      summary: Create album
+      tags:
+      - albums
+  /album/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete album
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete album
+      tags:
+      - albums
+    get:
+      consumes:
+      - application/json
+      description: Get album by ID
+      parameters:
+      - description: Album ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Album'
+      summary: Get album by ID
+      tags:
+      - albums
+swagger: "2.0"

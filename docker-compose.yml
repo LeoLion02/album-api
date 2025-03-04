@@ -1,0 +1,47 @@
+services:
+  album-api:
+    image: golang:1.24
+    ports:
+      - "8080:8080"
+    build: 
+      dockerfile: Dockerfile
+    networks:
+      - bridge_network 
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: "mssql"
+    environment:
+      DB_HOST: sqlserver
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "1q2w3e4r@#$"
+      MSSQL_PID: "developer"
+    ports:
+      - "1433:1433"
+    networks:
+      - bridge_network
+    volumes:
+      - ./init.sql:/init.sql
+    restart: "no"
+
+  sqlserver-configurator:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-configurator
+    volumes:
+      - ./init.sql:/init.sql
+    depends_on:
+      sqlserver:
+        condition: service_started
+    networks:
+      - bridge_network
+    command: >
+      bash -c "
+        /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P '1q2w3e4r@#$' -C -i /init.sql || exit 1;
+        /opt/mssql/bin/sqlservr
+      "
+      
+networks:
+  bridge_network:
+    driver: bridge
